@@ -54,9 +54,9 @@ from keras.layers import Dense, Input
 #model = Sequential()
 
 input1 = Input(shape=(3,))
-dense1 = Dense(5)(input1)
-dense3 = Dense(3)(dense1)
-output1 = Dense(4)(dense3)
+dense1 = Dense(10)(input1)
+dense3 = Dense(55)(dense1)
+output1 = Dense(50)(dense3)
 
 # input2 = Input(shape=(3,))
 # dense21 = Dense(7)(input2)
@@ -71,14 +71,14 @@ output1 = Dense(4)(dense3)
 # middle2 = Dense(7)(middle1)
 # middle3 = Dense(1)(middle2) #현재 merge된 마지막 레이어
 
-output_1 = Dense(2)(output1) #1번째 아웃풋 모델
+output_1 = Dense(75)(output1) #1번째 아웃풋 모델
 output_1 = Dense(3)(output_1)
 
-output_2 = Dense(4)(output1) #2번째 아웃풋 모델
-output_2 = Dense(4)(output_2)
+output_2 = Dense(20)(output1) #2번째 아웃풋 모델
+output_2 = Dense(15)(output_2)
 output_2 = Dense(3)(output_2)
 
-output_3 = Dense(5)(output1) #3번째 아웃풋 모델
+output_3 = Dense(20)(output1) #3번째 아웃풋 모델
 output_3 = Dense(3)(output_3)
 
 model = Model(inputs = input1,
