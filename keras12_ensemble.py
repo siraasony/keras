@@ -43,13 +43,20 @@ dense23 = Dense(4)(dense21)
 output2 = Dense(5)(dense23)
 
 from keras.layers.merge import concatenate
-merge1 = concatenate([output1, output2]) #모델을 사슬처럼 엮다.
+
+from keras.layers import Concatenate
+
+#merge1 = concatenate([output1, output2]) #모델을 사슬처럼 엮다.
+merge1 = Concatenate()([output1, output2])
+#class와 function형 concatenate의 차이 -  import
 
 middle1 = Dense(4)(merge1)
 middle2 = Dense(7)(middle1)
 output = Dense(1)(middle2)
 
 model = Model(inputs = [input1, input2], outputs = output)
+#두개 이상 넣을 때는 list형식으로 넣으면 된다! / 1개도 list 무방
+
 
 #model.add(Dense(5))
 # model.add(Dense(2))

@@ -27,8 +27,8 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Input
 
 input1 = Input(shape=(3,))
-dense1 = Dense(5)(input1)
-dense2 = Dense(2)(dense1)
+dense1 = Dense(10)(input1)
+dense2 = Dense(15)(dense1)
 dense3 = Dense(3)(dense2)
 output1 = Dense(1)(dense3)
 
