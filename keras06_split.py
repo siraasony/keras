@@ -12,9 +12,9 @@ print (x_train)
 print (x_val)
 print (x_test)
 
-# print (x.shape)
-# print (y.shape) 
-
+print (x.shape)
+print (y.shape) 
+'''
 # model
 from keras.models import Sequential
 from keras.layers import Dense
@@ -41,3 +41,4 @@ print (aaa)
 
 # bbb = model.predict(x, batch_size=1)
 # print (bbb)
+'''
