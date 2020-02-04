@@ -76,3 +76,5 @@ x_input = array([[90, 95, 100], [100, 105, 110], [110, 115, 120]])
 x_input = x_input.reshape(1,3,3)
 y_predict1 = model.predict(x_input)
 print (y_predict1)
+
+#회귀모델에서는 accuracy를 사용하지 않는다.

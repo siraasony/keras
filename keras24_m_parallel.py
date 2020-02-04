@@ -2,6 +2,8 @@ from numpy import array, hstack
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, LSTM
+from keras.callbacks import TensorBoard
+
 
 def split_sequence3(sequence, n_steps): #n_steps: 몇개씩 자를건가
     x, y = list(), list()
@@ -61,6 +63,8 @@ model.add(Dense(3, activation = 'relu'))
 
 # 3. 지표는 loss
 model.compile(loss='mse', optimizer='adam', metrics=['mse'])  
+tb_hist = TensorBoard(log_dir='./graph', histogram_freq=0, write_graph=True, write_images=True)
+
 model.fit(x, y, epochs=100, batch_size=1, verbose =1)  
 loss, mse = model.evaluate(x, y, batch_size=1)
 print("loss:",loss,"mse:", mse) 
