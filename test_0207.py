@@ -146,9 +146,11 @@ loss, mse = model.evaluate([x1_test, x2_test], y1_test, batch_size = 1)
 print('loss:', loss)
 
 y_pred = model.predict([x1_test, x2_test])
+print('종가:', y1_test[-1], 'y예측값:', y_pred[-1])
 
-for i in range(128):
-    print('종가:', y1_test[i], 'y예측값:', y_pred[i])
+
+# for i in range(128):
+#     print('종가:', y1_test[i], 'y예측값:', y_pred[i])
     
 # RMSE
 from sklearn.metrics import mean_squared_error
@@ -205,6 +207,6 @@ x_test_m = np.reshape(x_test_m, (x_test_m.shape[0], x_test_m.shape[1] * x_test_m
 model_m = RandomForestClassifier()
 model_m.fit(x_train_m, y_train_m)
 y_pred_m = model_m.predict(x_test_m)
-
-for i in range(128):
-    print('종가:', y_test_m[i], 'y예측값:', y_pred_m[i])
+print('종가:', y_test_m[-1], 'y예측값:', y_pred_m[-1])
+# for i in range(128):
+#     print('종가:', y_test_m[i], 'y예측값:', y_pred_m[i])
