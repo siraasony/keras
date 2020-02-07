@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 
-df1 = pd.read_csv("./data/samsung.csv", index_col=0, header=0, encoding='cp949', sep=',') # 날짜 빠지고 나머지 데이터만 남는다. 
+df1 = pd.read_csv("C:\Study\keras\samsung\data/samsung.csv", index_col=0, header=0, encoding='cp949', sep=',') # 날짜 빠지고 나머지 데이터만 남는다. 
 print (df1)
 print (df1.shape)
 
-df2 = pd.read_csv("./data/kospi200.csv", index_col=0, header=0, encoding='cp949', sep=',')
+df2 = pd.read_csv("C:\Study\keras\samsung\data/kospi200.csv", index_col=0, header=0, encoding='cp949', sep=',')
 print (df2)
 print (df2.shape)
 
@@ -37,7 +37,7 @@ print (df1.shape, df2.shape)
 np.save('./data/samsung.npy', arr = df1)
 np.save('./data/kospi200.npy', arr = df2)
 
-
+#==================================================================================
 
 samsung = np.load('./data/samsung.npy')
 kospi200 = np.load('./data/kospi200.npy')
@@ -98,10 +98,10 @@ x2_train = scaler.transform(x2_train)
 x2_test = scaler.transform(x2_test)
 print(x2_train[0, :])
 
-x1_train =  x1_train.reshape(294, 5, 5)
-x1_test = x1_test.reshape(127, 5, 5)
-x2_train =  x2_train.reshape(294, 5, 5)
-x2_test = x2_test.reshape(127, 5, 5)
+x1_train =  x1_train.reshape(297, 5, 5)
+x1_test = x1_test.reshape(128, 5, 5)
+x2_train =  x2_train.reshape(297, 5, 5)
+x2_test = x2_test.reshape(128, 5, 5)
 
 # 모델
 from keras.models import Sequential, Model
@@ -109,7 +109,9 @@ from keras.layers import Dense, LSTM, Input
 
 # model 1
 input1 = Input(shape=(5, 5))
-dense1 = LSTM(64)(input1)
+dense1 = LSTM(64, activation='relu')(input1)
+dense1 = Dense(32)(dense1)
+dense1 = Dense(32)(dense1)
 dense1 = Dense(32)(dense1)
 dense1 = Dense(32)(dense1)
 dense1 = Dense(32)(dense1)
@@ -117,7 +119,9 @@ output1 = Dense(1)(dense1)
 
 # model 2
 input2 = Input(shape=(5, 5))
-dense2 = LSTM(64)(input2)
+dense2 = LSTM(128, activation='relu')(input2)
+dense2 = Dense(64)(dense2)
+dense2 = Dense(32)(dense2)
 dense2 = Dense(32)(dense2)
 dense2 = Dense(32)(dense2)
 dense2 = Dense(32)(dense2)
@@ -125,9 +129,10 @@ output2 = Dense(1)(dense2)
 
 from keras.layers import Concatenate, concatenate
 merge1 = concatenate([output1, output2])
-middle1 = Dense(16)(merge1)
-middle2 = Dense(8)(middle1)
-output = Dense(1)(middle2)
+middle1 = Dense(64)(merge1)
+middle2 = Dense(32)(middle1)
+middle3 = Dense(32)(middle2)
+output = Dense(1)(middle3)
 
 model = Model(inputs = [input1, input2], outputs = output)
 model.summary()
@@ -135,14 +140,14 @@ model.summary()
 model.compile(loss='mse', optimizer='adam', metrics=['mse']) # mse, mae 사용
 from keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(patience=20)
-model.fit([x1_train, x2_train], y1_train, epochs=50, batch_size = 1, validation_split = 0, callbacks=[early_stopping]) 
+model.fit([x1_train, x2_train], y1_train, epochs=100, batch_size = 1, validation_split = 0, callbacks=[early_stopping]) 
 
 loss, mse = model.evaluate([x1_test, x2_test], y1_test, batch_size = 1)
 print('loss:', loss)
 
 y_pred = model.predict([x1_test, x2_test])
 
-for i in range(5):
+for i in range(128):
     print('종가:', y1_test[i], 'y예측값:', y_pred[i])
     
 # RMSE
@@ -150,3 +155,56 @@ from sklearn.metrics import mean_squared_error
 def RMSE(y_test, y_pred):
     return np.sqrt(mean_squared_error(y1_test, y_pred))
 print('RMSE : ', RMSE(y1_test, y_pred))
+
+
+
+#====================================randomforest=======================
+
+
+
+samsung = np.load('./data/samsung.npy')
+kospi200 = np.load('./data/kospi200.npy')
+
+print (kospi200)
+print (kospi200.shape)
+
+
+def split_xy5(dataset, time_steps, y_column):
+    x, y = list(), list()
+    for i in range(len(dataset)) :
+        x_end_number = i + time_steps
+        y_end_number = x_end_number + y_column
+        
+        if y_end_number > len(dataset) :
+            break
+        tmp_x = dataset[i:x_end_number, :]
+        tmp_y = dataset[x_end_number:y_end_number, 3]
+        x.append(tmp_x)
+        y.append(tmp_y)
+    return np.array(x), np.array(y)
+    
+x, y = split_xy5(samsung, 5, 1)
+print (x.shape)
+print (y.shape)
+print (x[0,:], '\n', y[0])
+
+
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+
+x_train_m, x_test_m, y_train_m, y_test_m = train_test_split(x, y, random_state = 1, test_size = 0.3, shuffle = False)
+
+x_train_m = np.reshape(x_train_m, (x_train_m.shape[0], x_train_m.shape[1] * x_train_m.shape[2]))
+x_test_m = np.reshape(x_test_m, (x_test_m.shape[0], x_test_m.shape[1] * x_test_m.shape[2]))
+
+
+model_m = RandomForestClassifier()
+model_m.fit(x_train_m, y_train_m)
+y_pred_m = model_m.predict(x_test_m)
+
+for i in range(128):
+    print('종가:', y_test_m[i], 'y예측값:', y_pred_m[i])
